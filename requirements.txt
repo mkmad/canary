@@ -1,0 +1,3 @@
+falcon
+taskflow
+-e git+https://github.com/python-zk/kazoo.git#egg=kazoo
