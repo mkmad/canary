@@ -6,9 +6,33 @@ Monitoring Service for Openstack Taskflow's Jobboards
 
 Taskflow is used to monitor other job-boards, and post to cassandra with its outputs.
 
+# Console Scripts
+
+```python
+canary-producer
+```
+
+Canary's own producer process that posts jobs to Canary's jobboard
+
+```python
+canary-worker
+```
+
+Canary's conductor which pulls jobs off Canary's jobboard, to query
+paths submitted to it (using Taskflow) and post to cassandra with a timestamp
+
+```python
+canary-server
+```
+
+Canary's WSGI server that serves job counts and corresponding jobs, over the period
+of last `x` seconds (which is set as interval under canary.conf)
+
+
 # API
 ```python
-  GET v1.0/jobs?path=/taskflow/jobs/myawesomejobs
+
+GET v1.0/jobs?path=/taskflow/jobs/myawesomejobs
   
 
 HTTP/1.0 200 OK
