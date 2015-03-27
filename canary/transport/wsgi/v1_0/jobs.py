@@ -46,7 +46,9 @@ class ItemResource(object):
     def on_get(self, req, resp):
         path = req.get_param('path')
         if not path:
-            raise HTTPBadRequest("Specify a valid `path` querystring")
+            description = "Specify a valid `path` querystring"
+            raise HTTPBadRequest(title="Bad Request",
+                                 description=description)
         cassandra_driver = CassandraStorageDriver()
         cassandra_driver.connect(conf['cassandra']['keyspace'])
         current_time = time.time()
