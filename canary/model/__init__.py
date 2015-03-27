@@ -24,11 +24,12 @@ class JobBoard(object):
 
             json_list = []
             for job in jobs_iter:
+                status = job.state
                 job_dict = job.__dict__
                 job_dict['_created_on'] = job_dict['_created_on'].isoformat()
                 del job_dict['_client']
                 del job_dict['_board']
+                job_dict['status'] = status
                 json_list.append(job_dict)
 
             return json.dumps(json_list)
-
