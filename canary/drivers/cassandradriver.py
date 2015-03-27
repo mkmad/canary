@@ -86,6 +86,8 @@ CQL_GET_JOB_DETAILS = '''
     FROM monitor_jobs
     WHERE date >= %(date)s
     AND path = %(path)s
+    ORDER BY date DESC
+    LIMIT 1
 '''
 
 CQL_STORE_JOB_DETAILS = '''
