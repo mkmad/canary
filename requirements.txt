@@ -1,3 +1,5 @@
+cdeploy
 falcon
+oslo.config
 taskflow
 -e git+https://github.com/python-zk/kazoo.git#egg=kazoo
