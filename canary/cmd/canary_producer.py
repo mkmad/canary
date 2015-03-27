@@ -23,6 +23,9 @@ def run():
         cfg.StrOpt('persistence',
                    default='zookeeper',
                    help='persistence backend driver'),
+        cfg.StrOpt('zookeeper_host',
+                   default='localhost:2181',
+                   help='zookeeper host that canary needs to query'),
     ]
 
 
@@ -37,10 +40,11 @@ def run():
         'name' : conf['canary'].name,
         'path' : conf['canary'].path,
         'persistence' : {
-            'connection': conf['canary'].persistence
+            'connection': conf['canary'].persistence,
         },
         'conf' : {
-            'path' : conf['canary'].path
+            'path' : conf['canary'].path,
+            'hosts': conf['canary'].zookeeper_host
         }
     }
 
