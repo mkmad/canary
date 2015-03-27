@@ -58,4 +58,7 @@ class ItemResource(object):
                                              path=path)
         cassandra_driver.close_connection()
         resp.status = falcon.HTTP_200
+
+        for i in range(len(job_details)):
+            job_details[i]['jobs'] = json.loads(json.loads(job_details[i]['jobs']))
         resp.body = json.dumps(job_details)

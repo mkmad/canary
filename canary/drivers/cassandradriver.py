@@ -249,8 +249,6 @@ class CassandraStorageDriver(object):
     def insert_job_details(self, path, job_details, job_count):
         query = self.simplestatement(CQL_STORE_JOB_DETAILS,
                                      consistency_level=self.consistency_level)
-        if job_details == []:
-            job_details = json.dumps(job_details)
         date = canonicalize(time.time())
         args = dict(
             date=date,

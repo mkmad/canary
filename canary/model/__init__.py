@@ -28,8 +28,7 @@ class JobBoard(object):
                 job_dict['_created_on'] = job_dict['_created_on'].isoformat()
                 del job_dict['_client']
                 del job_dict['_board']
-                serialized_job = json.dumps(job_dict)
-                json_list.append(serialized_job)
+                json_list.append(job_dict)
 
-            return json_list
+            return json.dumps(json_list)
 

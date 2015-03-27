@@ -1,3 +1,5 @@
+import json
+
 from oslo.config import cfg
 from taskflow.patterns import linear_flow
 from taskflow import task
@@ -51,5 +53,5 @@ class InsertJobData(task.Task):
         cassandra_driver.connect(conf['cassandra']['keyspace'])
         cassandra_driver.insert_job_details(path=path,
                                             job_count=job_count,
-                                            job_details=job_details)
+                                            job_details=json.dumps(job_details))
         cassandra_driver.close_connection()
