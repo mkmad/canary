@@ -1,2 +1,49 @@
-# canary
+# Canary
 Monitoring Service for Openstack Taskflow's Jobboards
+
+# How does it work?
+*Task-ception*
+
+Taskflow is used to monitor other job-boards, and post to cassandra with its outputs.
+
+# API
+```python
+  GET v1.0/jobs?path=/taskflow/jobs/myawesomejobs
+  
+
+HTTP/1.0 200 OK
+Date: Fri, 27 Mar 2015 14:45:13 GMT
+Server: WSGIServer/0.1 Python/2.7.6
+content-type: application/json; charset=utf-8
+
+[
+    {
+        "job_count": 1,
+        "jobs": [
+            {
+                "_backend": {
+                    "connection": "zookeeper"
+                },
+                "_book": null,
+                "_book_data": {
+                    "name": "myawesomeservice-2db7c7fb-e3d4-4602-8658-2c0ec0736b50",
+                    "uuid": "81d22b6c-d11e-4c41-8e05-e423385a0ddc"
+                },
+                "_created_on": "2015-03-27T10:28:07.951000",
+                "_details": {
+                    "store": {
+                        "awesome": "sauce",
+                    }
+                },
+                "_lock_path": "/taskflow/jobs/myawesomejobs/job0000000042.lock",
+                "_name": "myawesomeservice-2db7c7fb-e3d4-4602-8658-2c0ec0736b50",
+                "_node_not_found": false,
+                "_path": "/taskflow/jobs/myawesomejobs/job0000000042",
+                "_root": "/taskflow/jobs/myawesomejobs/",
+                "_sequence": 42,
+                "_uuid": "d76816c3-db93-4b66-8272-637b114a84e9"
+            },
+        ]
+    }
+]
+```
