@@ -11,5 +11,5 @@ LOG = logging.getLogger(__name__)
 
 
 def run():
-    LOG.info("Starting Billing Conductor")
+    LOG.info("Starting Canary Conductor")
     ServicesDriver().run_task_worker()
