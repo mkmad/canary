@@ -66,7 +66,7 @@ content-type: application/json; charset=utf-8
                 "_path": "/taskflow/jobs/myawesomejobs/job0000000042",
                 "_root": "/taskflow/jobs/myawesomejobs/",
                 "_sequence": 42,
-                "status": CLAIMED,
+                "status": "CLAIMED",
                 "_uuid": "d76816c3-db93-4b66-8272-637b114a84e9"
             },
         ]
