@@ -84,7 +84,7 @@ class TaskflowDistributedTaskServices(base.DistributedTaskServices):
                     persistence=persistence) as board:
 
                 conductor = single_threaded.SingleThreadedConductor(
-                    "Poppy billing worker conductor", board, persistence,
+                    "Canary worker conductor", board, persistence,
                     engine='serial')
 
                 conductor.run()
