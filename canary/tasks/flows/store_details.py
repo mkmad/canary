@@ -1,3 +1,4 @@
+import importlib
 import json
 
 from oslo.config import cfg
@@ -6,26 +7,56 @@ from taskflow import task
 
 from canary.openstack.common import log
 from canary.model import JobBoard
-from canary.drivers.cassandradriver import CassandraStorageDriver
 
-conf = cfg.CONF
-conf(project='canary', prog='canary', args=[])
 
 log.setup('canary')
 LOG = log.getLogger(__name__)
 
-_CASSANDRA_OPTIONS = [
-    cfg.StrOpt('keyspace', default='canary',
-               help='Keyspace for all queries made in session'),
 
-]
+def memoize(f):
+    memo = {}
 
-CASSANDRA_GROUP = cfg.OptGroup(
-        name='cassandra',
-        title='cassandra options'
-    )
+    def helper(*args, **kwargs):
+        x = str(args) + str(kwargs)
+        if x not in memo:
+            memo[x] = f(*args, **kwargs)
+        return memo[x]
 
-conf.register_opts(_CASSANDRA_OPTIONS, group=CASSANDRA_GROUP)
+    return helper
+
+@memoize
+def load_database_driver():
+
+    conf = cfg.CONF
+    conf(project='canary', prog='canary', args=[])
+
+    _CANARY_OPTIONS = [
+        cfg.StrOpt('driver', default='mongo',
+                   help='Driver to be loaded')
+
+    ]
+
+    CANARY_GROUP = cfg.OptGroup(
+            name='canary',
+            title='canary options'
+        )
+
+    conf.register_opts(_CANARY_OPTIONS, group=CANARY_GROUP)
+    return _load_driver(conf.canary.driver)
+
+
+@memoize
+def _load_driver(classname):
+    """Creates of the instance of the specified
+    class given the fully-qualified name. The module
+    is dynamically imported.
+    """
+    pos = classname.rfind('.')
+    module_name = classname[:pos]
+    class_name = classname[pos + 1:]
+
+    mod = importlib.import_module(module_name)
+    return getattr(mod, class_name)()
 
 def canary_monitoring_service():
     flow = linear_flow.Flow('Canary Monitoring Service').add(
@@ -49,9 +80,7 @@ class InsertJobData(task.Task):
 
     def execute(self, job_details_tuple, **kwargs):
         job_details, path, job_count = job_details_tuple
-        cassandra_driver = CassandraStorageDriver()
-        cassandra_driver.connect(conf['cassandra']['keyspace'])
-        cassandra_driver.insert_job_details(path=path,
-                                            job_count=job_count,
-                                            job_details=json.dumps(job_details))
-        cassandra_driver.close_connection()
+        driver = load_database_driver()
+        driver.insert_job_details(path=path,
+                                  job_count=job_count,
+                                  job_details=json.dumps(job_details))

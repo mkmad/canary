@@ -19,7 +19,6 @@ import multiprocessing
 import os
 import ssl
 import time
-import json
 
 from cassandra import auth
 from cassandra import cluster
@@ -208,7 +207,7 @@ class CassandraStorageDriver(object):
                 self.lock.release()
         return self.session
 
-    def connect(self, keyspace):
+    def connect(self, keyspace=None):
         """connect.
         :returns connection
         """
