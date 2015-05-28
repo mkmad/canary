@@ -33,8 +33,10 @@ of last `x` seconds (which is set as interval under canary.conf)
 
 # Dashboard
 
+From the /dashboard folder, run:
+
 ```python
-canary-web $ meteor 
+$ meteor 
 ```
 
 # API
