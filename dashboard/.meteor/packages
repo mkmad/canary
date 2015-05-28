@@ -7,3 +7,8 @@
 meteor-platform
 autopublish
 insecure
+chart:chart
+twbs:bootstrap
+fortawesome:fontawesome
+jquery
+momentjs:moment

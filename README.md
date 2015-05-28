@@ -36,12 +36,13 @@ of last `x` seconds (which is set as interval under canary.conf)
 From the /dashboard folder, run:
 
 ```python
+$ export MONGO_URL=mongodb://localhost:27017/canary
 $ meteor 
 ```
 
 # API
 
-The API is optional.  Usually the canary-server is run via cron.
+The API is optional.  Usually the canary-producer is run via cron.
 
 ```python
 

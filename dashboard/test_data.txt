@@ -1,0 +1,146 @@
+[
+{
+    "_backend": {
+        "connection": "zookeeper"
+    },
+    "_book": null,
+    "_book_data": {
+        "name": "myawesomeservice-2db7c7fb-e3d4-4602-8658-2c0ec0736b50",
+        "uuid": "81d22b6c-d11e-4c41-8e05-e423385a0ddc"
+    },
+    "_created_on": "2015-03-27T10:28:07.951000",
+    "_details": {
+        "store": {
+            "awesome": "sauce",
+        }
+    },
+    "_lock_path": "/taskflow/jobs/myawesomejobs/job0000000042.lock",
+    "_name": "myawesomeservice-2db7c7fb-e3d4-4602-8658-2c0ec0736b50",
+    "_node_not_found": false,
+    "_path": "/taskflow/jobs/myawesomejobs/job0000000042",
+    "_root": "/taskflow/jobs/myawesomejobs/",
+    "_sequence": 42,
+    "status": "CLAIMED",
+    "_uuid": "d76816c3-db93-4b66-8272-637b114a84e9"
+},
+{
+    "_backend": {
+        "connection": "zookeeper"
+    },
+    "_book": null,
+    "_book_data": {
+        "name": "myawesomeservice-2db7c7fb-e3d4-4602-8658-2c0ec0736b50",
+        "uuid": "81d22b6c-d11e-4c41-8e05-e423385a0ddc"
+    },
+    "_created_on": "2015-03-27T10:29:07.951000",
+    "_details": {
+        "store": {
+            "awesome": "sauce",
+        }
+    },
+    "_lock_path": "/taskflow/jobs/myawesomejobs/job0000000042.lock",
+    "_name": "myawesomeservice-2db7c7fb-e3d4-4602-8658-2c0ec0736b50",
+    "_node_not_found": false,
+    "_path": "/taskflow/jobs/myawesomejobs/job0000000042",
+    "_root": "/taskflow/jobs/myawesomejobs/",
+    "_sequence": 42,
+    "status": "FAILED",
+    "_uuid": "d76816c3-db93-4b66-8272-637b114a84e9"
+},
+{
+    "_backend": {
+        "connection": "zookeeper"
+    },
+    "_book": null,
+    "_book_data": {
+        "name": "myawesomeservice-2db7c7fb-e3d4-4602-8658-2c0ec0736b50",
+        "uuid": "81d22b6c-d11e-4c41-8e05-e423385a0ddc"
+    },
+    "_created_on": "2015-03-27T10:30:07.951000",
+    "_details": {
+        "store": {
+            "awesome": "sauce",
+        }
+    },
+    "_lock_path": "/taskflow/jobs/myawesomejobs/job0000000042.lock",
+    "_name": "myawesomeservice-2db7c7fb-e3d4-4602-8658-2c0ec0736b50",
+    "_node_not_found": false,
+    "_path": "/taskflow/jobs/myawesomejobs/job0000000042",
+    "_root": "/taskflow/jobs/myawesomejobs/",
+    "_sequence": 42,
+    "status": "POSTED",
+    "_uuid": "d76816c3-db93-4b66-8272-637b114a84e9"
+},
+{
+    "_backend": {
+        "connection": "zookeeper"
+    },
+    "_book": null,
+    "_book_data": {
+        "name": "myawesomeservice-2db7c7fb-e3d4-4602-8658-2c0ec0736b50",
+        "uuid": "81d22b6c-d11e-4c41-8e05-e423385a0ddc"
+    },
+    "_created_on": "2015-03-27T10:31:07.951000",
+    "_details": {
+        "store": {
+            "awesome": "sauce",
+        }
+    },
+    "_lock_path": "/taskflow/jobs/myawesomejobs/job0000000042.lock",
+    "_name": "myawesomeservice-2db7c7fb-e3d4-4602-8658-2c0ec0736b50",
+    "_node_not_found": false,
+    "_path": "/taskflow/jobs/myawesomejobs/job0000000042",
+    "_root": "/taskflow/jobs/myawesomejobs/",
+    "_sequence": 42,
+    "status": "CLAIMED",
+    "_uuid": "d76816c3-db93-4b66-8272-637b114a84e9"
+},
+{
+    "_backend": {
+        "connection": "zookeeper"
+    },
+    "_book": null,
+    "_book_data": {
+        "name": "myawesomeservice-2db7c7fb-e3d4-4602-8658-2c0ec0736b50",
+        "uuid": "81d22b6c-d11e-4c41-8e05-e423385a0ddc"
+    },
+    "_created_on": "2015-03-27T10:32:07.951000",
+    "_details": {
+        "store": {
+            "awesome": "sauce",
+        }
+    },
+    "_lock_path": "/taskflow/jobs/myawesomejobs/job0000000042.lock",
+    "_name": "myawesomeservice-2db7c7fb-e3d4-4602-8658-2c0ec0736b50",
+    "_node_not_found": false,
+    "_path": "/taskflow/jobs/myawesomejobs/job0000000042",
+    "_root": "/taskflow/jobs/myawesomejobs/",
+    "_sequence": 42,
+    "status": "CLAIMED",
+    "_uuid": "d76816c3-db93-4b66-8272-637b114a84e9"
+},
+{
+    "_backend": {
+        "connection": "zookeeper"
+    },
+    "_book": null,
+    "_book_data": {
+        "name": "myawesomeservice-2db7c7fb-e3d4-4602-8658-2c0ec0736b50",
+        "uuid": "81d22b6c-d11e-4c41-8e05-e423385a0ddc"
+    },
+    "_created_on": "2015-03-27T10:33:07.951000",
+    "_details": {
+        "store": {
+            "awesome": "sauce",
+        }
+    },
+    "_lock_path": "/taskflow/jobs/myawesomejobs/job0000000042.lock",
+    "_name": "myawesomeservice-2db7c7fb-e3d4-4602-8658-2c0ec0736b50",
+    "_node_not_found": false,
+    "_path": "/taskflow/jobs/myawesomejobs/job0000000042",
+    "_root": "/taskflow/jobs/myawesomejobs/",
+    "_sequence": 42,
+    "status": "CLAIMED",
+    "_uuid": "d76816c3-db93-4b66-8272-637b114a84e9"
+}
+]

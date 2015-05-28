@@ -189,6 +189,9 @@ p.copyright {
     background: #c50022 no-repeat center center;
 }
 
+.label-UNCLAIMED{
+    background-color: #D3D3D3;
+}
 .label-CLAIMED{
     background-color: #5cb85c;
 }
