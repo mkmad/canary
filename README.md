@@ -5,7 +5,9 @@ Monitoring Service for Openstack Taskflow's Jobboards
 # How does it work?
 *Task-ception*
 
-Taskflow is used to monitor other job-boards, and post to cassandra with its outputs.
+Canary is used to monitor other job-boards. The results are posted to MongoDB.
+
+The dashboard uses meteor.js and will update in realtime, detecting changes in the MongoDB.
 
 # Console Scripts
 
@@ -29,8 +31,16 @@ canary-server
 Canary's WSGI server that serves job counts and corresponding jobs, over the period
 of last `x` seconds (which is set as interval under canary.conf)
 
+# Dashboard
+
+```python
+canary-web $ meteor 
+```
 
 # API
+
+The API is optional.  Usually the canary-server is run via cron.
+
 ```python
 
 GET v1.0/jobs?path=/taskflow/jobs/myawesomejobs
