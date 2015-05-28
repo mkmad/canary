@@ -83,4 +83,4 @@ class InsertJobData(task.Task):
         driver = load_database_driver()
         driver.insert_job_details(path=path,
                                   job_count=job_count,
-                                  job_details=json.dumps(job_details))
+                                  job_details=json.loads(job_details))
