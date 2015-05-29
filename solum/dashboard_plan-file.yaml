@@ -1,0 +1,11 @@
+version: 1
+name: canary
+description: 'Canary: A canary for Taskflow'
+artifacts:
+- name: canary
+  content:
+    href: https://github.com/rackerlabs/canary.git
+  language_pack: meteor
+  # unittest_cmd: pip install -r test-requirements.txt; pep8 app.py
+  run_cmd: sh solum/dashboard_run.sh
+  ports: 80
