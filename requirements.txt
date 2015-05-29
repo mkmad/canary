@@ -14,3 +14,4 @@ wsgiref==0.1.2
 requests
 netifaces
 wrapt
+decorator
