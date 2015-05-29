@@ -24,12 +24,18 @@ class JobBoard(object):
 
             json_list = []
             for job in jobs_iter:
+                board = job.board
+                owner = board.find_owner(job)
                 status = job.state
                 job_dict = job.__dict__
                 job_dict['_created_on'] = job_dict['_created_on'].isoformat()
+                job_dict['status'] = status
+                job_dict['owner'] = owner
                 del job_dict['_client']
                 del job_dict['_board']
-                job_dict['status'] = status
                 json_list.append(job_dict)
 
             return json.dumps(json_list)
+
+    def close(self):
+        self.board.close()
