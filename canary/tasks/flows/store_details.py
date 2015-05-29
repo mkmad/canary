@@ -69,8 +69,11 @@ class GenerateTaskflowInformation(task.Task):
 
     default_provides = 'job_details_tuple'
 
-    def execute(self, name, path, conf, persistence):
-        jb = JobBoard(name=name,conf=conf,persistence=persistence)
+    def execute(self, name, path, conf, persistence, logbook_path):
+        jb = JobBoard(name=name,
+                      conf=conf,
+                      persistence=persistence,
+                      logbook_path=logbook_path)
         job_details = jb.get_all_jobs(serializable=True)
         job_count = jb.board.job_count
         job_details_tuple = (job_details, path, job_count)
