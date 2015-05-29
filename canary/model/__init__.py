@@ -36,3 +36,6 @@ class JobBoard(object):
                 json_list.append(job_dict)
 
             return json.dumps(json_list)
+
+    def close(self):
+        self.board.close()

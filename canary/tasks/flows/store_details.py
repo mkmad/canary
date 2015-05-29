@@ -74,6 +74,7 @@ class GenerateTaskflowInformation(task.Task):
         job_details = jb.get_all_jobs(serializable=True)
         job_count = jb.board.job_count
         job_details_tuple = (job_details, path, job_count)
+        jb.close()
         return job_details_tuple
 
 class InsertJobData(task.Task):
