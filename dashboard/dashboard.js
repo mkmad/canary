@@ -9,9 +9,24 @@ if (Meteor.isClient) {
   });
 
   Template.stats.helpers({
-      unclaimed_count: function() { return find_jobs().length; },
-      active_count: function() { return Jobs.find({status: "CLAIMED"}).count(); },
-      failed_count: function() { return Jobs.find({status: "FAILED"}).count(); }
+      unclaimed_count: function() {
+            return find_jobs().filter(
+              function(o, index ) {
+                return o.status === "UNCLAIMED";
+              }).length;
+      },
+      claimed_count: function() {
+            return find_jobs().filter(
+              function(o, index ) {
+                return o.status === "CLAIMED";
+              }).length;
+      },
+      complete_count: function() {
+            return find_jobs().filter(
+              function(o, index ) {
+                return o.status === "COMPLETE";
+              }).length;
+      }
   });
 
 }

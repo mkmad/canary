@@ -190,14 +190,11 @@ p.copyright {
 }
 
 .label-UNCLAIMED{
-    background-color: #D3D3D3;
+    background-color: #c50022;
 }
 .label-CLAIMED{
     background-color: #5cb85c;
 }
-.label-FAILED{
-    background-color: #c50022;
-}
-.label-POSTED{
-    background-color: #f0ad4e;
+.label-COMPLETE{
+    background-color: #D3D3D3;;
 }
