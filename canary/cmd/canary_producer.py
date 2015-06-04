@@ -20,6 +20,9 @@ def run():
         cfg.StrOpt('path',
                    default='/taskflow/jobs',
                    help='taskflow path to track'),
+        cfg.StrOpt('logbook_path',
+                   default='/taskflow',
+                   help='logbook path to track'),
         cfg.StrOpt('persistence',
                    default='zookeeper',
                    help='persistence backend driver'),
@@ -45,7 +48,8 @@ def run():
         'conf' : {
             'path' : conf['canary'].path,
             'hosts': conf['canary'].zookeeper_host
-        }
+        },
+        'logbook_path': conf['canary'].logbook_path,
     }
 
     LOG.info("Posting job to Zookeeper Jobboard")
