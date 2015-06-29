@@ -28,19 +28,19 @@ TASKFLOW_OPTIONS = [
     cfg.StrOpt('persistent_backend_type', default='zookeeper',
                help='Default jobboard persistent backend type'),
     cfg.ListOpt('jobboard_backend_host', default=['localhost'],
-                help='default jobboard backend server host'),
-    cfg.IntOpt('jobboard_backend_port', default=2181, help='default'
-               ' jobboard backend server port (e.g: ampq)'),
+                help='Default jobboard backend server host'),
+    cfg.IntOpt('jobboard_backend_port', default=2181,
+               help='Default jobboard backend server port (e.g: ampq)'),
     cfg.ListOpt('persistent_backend_host', default=['localhost'],
-                help='default persistent backend server host'),
-    cfg.IntOpt('persistent_backend_port', default=2181, help='default'
-               ' default persistent backend server port (e.g: ampq)'),
+                help='Default persistent backend server host'),
+    cfg.IntOpt('persistent_backend_port', default=2181,
+               help='Default persistent backend server port (e.g: ampq)'),
     cfg.StrOpt('canary_worker_path',
                default='/taskflow/jobs/canary_jobs',
-               help='zookeeper path for canary jobs'),
+               help='Default Zookeeper path for canary jobs'),
     cfg.StrOpt('canary_worker_jobboard',
                default='canary_jobs',
-               help='name of jobboard associated with canary worker jobs'),
+               help='Default jobboard name associated with canary worker jobs'),
 ]
 
 TASKFLOW_GROUP = 'tasks:taskflow'
