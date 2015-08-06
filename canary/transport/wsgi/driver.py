@@ -5,7 +5,7 @@ from oslo.config import cfg
 
 from canary.openstack.common import log
 from canary.transport.wsgi import v1_0
-from canary.drivers.cassandradriver import CassandraStorageDriver
+from canary.drivers.cassandra import cassandradriver
 import canary
 
 conf = cfg.CONF
@@ -13,19 +13,6 @@ conf(project='canary', prog='canary', args=[])
 
 log.setup('canary')
 LOG = log.getLogger(__name__)
-
-
-_CASSANDRA_OPTIONS = [
-    cfg.StrOpt('keyspace', default='canary',
-               help='Keyspace for all queries made in session'),
-
-]
-
-CASSANDRA_GROUP = cfg.OptGroup(
-        name='cassandra',
-        title='cassandra options'
-    )
-
 
 _CANARY_OPTIONS = [
     cfg.StrOpt('host', default='127.0.0.1',
@@ -35,26 +22,27 @@ _CANARY_OPTIONS = [
 ]
 
 CANARY_GROUP = cfg.OptGroup(
-        name='canary',
-        title='canary options'
-    )
+    name='canary',
+    title='canary options'
+)
 
 conf.register_opts(_CANARY_OPTIONS, group=CANARY_GROUP)
-conf.register_opts(_CASSANDRA_OPTIONS, group=CASSANDRA_GROUP)
 
 canary.database = None
+
 
 class Driver(object):
 
     def __init__(self):
 
         self.app = None
+        self.conf = conf
         self._init_routes()
         self._init_database_connections()
 
     def _init_database_connections(self):
-        db_driver = CassandraStorageDriver()
-        db_driver.connect(conf['cassandra']['keyspace'])
+        db_driver = cassandradriver.CassandraStorageDriver(self.conf)
+        db_driver.connect()
         canary.database = db_driver
 
     def _init_routes(self):
@@ -77,7 +65,7 @@ class Driver(object):
         host = conf['canary']['host']
         port = conf['canary']['port']
         LOG.info(msgtmpl,
-                    {'bind': host,
+                 {'bind': host,
                      'port': port})
 
         httpd = simple_server.make_server(host,

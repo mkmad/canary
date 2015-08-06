@@ -37,8 +37,8 @@ done
 ./kill_canary.sh
 
 # remove existing containers
-docker kill docker_mongo_1
-docker rm docker_mongo_1
+docker kill docker_cassandra_1
+docker rm docker_cassandra_1
 
 # run mongo
 pip install docker-compose
@@ -60,9 +60,4 @@ exec canary-producer > /dev/null 2>&1 &
 # start the canary-server
 exec canary-server > /dev/null 2>&1 &
 
-# run the dashboard
-export MONGO_URL=mongodb://dockerhost:27017/canary
-cd dashboard
-exec meteor > /dev/null 2>&1 &
-echo "canary-dashboard started."
 
