@@ -57,6 +57,9 @@ done
 # start the canary producer
 exec canary-producer > /dev/null 2>&1 &
 
+# start the canary-server
+exec canary-server > /dev/null 2>&1 &
+
 # run the dashboard
 export MONGO_URL=mongodb://dockerhost:27017/canary
 cd dashboard
