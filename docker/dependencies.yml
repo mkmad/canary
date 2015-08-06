@@ -1,4 +1,10 @@
-mongo:
-    image: mongo
+zookeeper:
+    image: jplock/zookeeper
     ports:
-     - 27017:27017
+     - 2181:2181
+
+cassandra:
+    image: library/cassandra
+    ports:
+     - 9160:9160
+     - 9042:9042

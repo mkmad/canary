@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Rackspace, Inc.
+# Copyright (c) 2014 Rackspace, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,29 +15,27 @@
 
 """Cassandra storage driver implementation."""
 
+import copy
+import json
 import multiprocessing
 import os
 import ssl
 import time
 
+import cassandra
 from cassandra import auth
 from cassandra import cluster
-from cassandra import ConsistencyLevel
+from cassandra import policies
 from cassandra import query
-from cassandra import InvalidRequest
 from cdeploy import migrator
-from oslo.config import cfg
+from oslo_config import cfg
 
 from canary.openstack.common import log as logging
 from canary.util import canonicalize
 
-conf = cfg.CONF
-conf(project='canary', prog='canary', args=[])
-logging.setup('canary')
-
 LOG = logging.getLogger(__name__)
 
-_CASSANDRA_OPTIONS = [
+CASSANDRA_OPTIONS = [
     cfg.ListOpt('cluster', default=['127.0.0.1'],
                 help='Cassandra cluster contact points'),
     cfg.IntOpt('port', default=9042, help='Cassandra cluster port'),
@@ -49,19 +47,16 @@ _CASSANDRA_OPTIONS = [
                 help='Does Cassandra have authentication enabled?'),
     cfg.StrOpt('username', default='', help='Cassandra username'),
     cfg.StrOpt('password', default='', help='Cassandra password'),
-    cfg.StrOpt('ssl_version', default='TLSv1.1', help='TLS version'),
     cfg.StrOpt('load_balance_strategy', default='RoundRobinPolicy',
-               help='Load balancing strategy for '
-                    'connecting to cluster nodes'),
+               help='Load balancing strategy for connecting to cluster nodes'),
     cfg.StrOpt('consistency_level', default='ONE',
                help='Consistency level of your cassandra query'),
-    cfg.StrOpt('migrations', default=os.path.join(os.path.dirname(__file__),
-                                                  'migrations'),
-               help='Path to directory containing CQL migration scripts'),
+    cfg.StrOpt('migrations_consistency_level', default='ONE',
+               help='Consistency level of cassandra migration queries'),
     cfg.IntOpt('max_schema_agreement_wait', default=10,
                help='The maximum duration (in seconds) that the driver will'
                ' wait for schema agreement across the cluster.'),
-    cfg.StrOpt('keyspace', default='canary',
+    cfg.StrOpt('keyspace', default='poppy',
                help='Keyspace for all queries made in session'),
     cfg.DictOpt(
         'replication_strategy',
@@ -69,16 +64,16 @@ _CASSANDRA_OPTIONS = [
             'class': 'SimpleStrategy',
             'replication_factor': '1'
         },
-        help='Replication strategy for Cassandra cluster'),
-
+        help='Replication strategy for Cassandra cluster'
+    ),
+    cfg.StrOpt(
+        'migrations_path',
+        default=os.path.join(os.path.dirname(__file__), 'migrations'),
+        help='Path to directory containing CQL migration scripts',
+    ),
 ]
 
-CASSANDRA_GROUP = cfg.OptGroup(
-        name='cassandra',
-        title='cassandra options'
-    )
-
-conf.register_opts(_CASSANDRA_OPTIONS, group=CASSANDRA_GROUP)
+CASSANDRA_GROUP = 'cassandra'
 
 CQL_GET_JOB_DETAILS = '''
     SELECT jobs, job_count
@@ -94,63 +89,60 @@ CQL_STORE_JOB_DETAILS = '''
     VALUES (%(date)s, %(path)s, %(job_count)s, %(jobs)s)
 '''
 
-def _connection(keyspace=None):
-    LOG.info('Initiating connection to cassandra')
+
+def _connection(conf, keyspace=None):
+    """connection.
+
+    :param datacenter
+    :returns session
+    """
     ssl_options = None
-    if conf['cassandra']['ssl_enabled']:
-        LOG.info('SSL is enabled')
-        ssl_options = {}
-        ssl_options['ca_certs'] = conf['cassandra']['ssl_ca_certs']
-        ssl_version = conf['cassandra']['ssl_version']
-        if ssl_version == 'TLSv1':
-            ssl_options['ssl_version'] = ssl.PROTOCOL_TLSv1
-        elif ssl_version == 'TLSv1.1':
-            ssl_options['ssl_version'] = ssl.PROTOCOL_TLSv1_1
-        elif ssl_version == 'TLSv1.2':
-            ssl_options['ssl_version'] = ssl.PROTOCOL_TLSv1_2
-        else:
-            LOG.info('Unknown SSL Version')
+    if conf.ssl_enabled:
+        ssl_options = {
+            'ca_certs': conf.ssl_ca_certs,
+            'ssl_version': ssl.PROTOCOL_TLSv1
+        }
 
-    LOG.info('Finished SSL part')
-
-    LOG.info('Starting password part')
     auth_provider = None
-    if conf['cassandra']['auth_enabled']:
-        LOG.info('Password authentication is enabled')
+    if conf.auth_enabled:
         auth_provider = auth.PlainTextAuthProvider(
-            username=conf['cassandra']['username'],
-            password=conf['cassandra']['password']
+            username=conf.username,
+            password=conf.password
         )
-    LOG.info('Finished password part')
 
-    LOG.info('Trying to connect to cassandra')
+    load_balancing_policy_class = getattr(policies, conf.load_balance_strategy)
+    load_balancing_policy = load_balancing_policy_class()
+
     cluster_connection = cluster.Cluster(
-        conf['cassandra']['cluster'],
+        conf.cluster,
         auth_provider=auth_provider,
-        port=conf['cassandra']['port'],
+        load_balancing_policy=load_balancing_policy,
+        port=conf.port,
         ssl_options=ssl_options,
+        max_schema_agreement_wait=conf.max_schema_agreement_wait
     )
-    LOG.info('Connected to cassandra')
 
-    LOG.info('Cassandra connection is established')
     session = cluster_connection.connect()
     if not keyspace:
-        keyspace = conf['cassandra']['keyspace']
+        keyspace = conf.keyspace
     try:
         session.set_keyspace(keyspace)
-    except InvalidRequest:
-        _create_keyspace(session,
-                         keyspace,
-                         conf['cassandra']['replication_strategy'])
+    except cassandra.InvalidRequest:
+        _create_keyspace(session, keyspace, conf.replication_strategy)
 
-
-    _run_migrations(conf['cassandra']['migrations'], session)
+    migration_session = copy.copy(session)
+    migration_session.default_consistency_level = \
+        getattr(cassandra.ConsistencyLevel, conf.migrations_consistency_level)
+    _run_migrations(conf.migrations_path, migration_session)
 
     session.row_factory = query.dict_factory
+
     return session
+
 
 def _create_keyspace(session, keyspace, replication_strategy):
     """create_keyspace.
+
     :param keyspace
     :param replication_strategy
     """
@@ -172,20 +164,63 @@ def _run_migrations(migrations_path, session):
 
 
 class CassandraStorageDriver(object):
+
     """Cassandra Storage Driver."""
 
-    def __init__(self):
+    def __init__(self, conf):
         super(CassandraStorageDriver, self).__init__()
 
-        self.consistency_level = getattr(ConsistencyLevel,
-                                         conf['cassandra']['consistency_level'])
+        conf.register_opts(CASSANDRA_OPTIONS, group=CASSANDRA_GROUP)
+        self.cassandra_conf = conf[CASSANDRA_GROUP]
+        self.consistency_level = getattr(
+            cassandra.ConsistencyLevel,
+            conf[CASSANDRA_GROUP].consistency_level)
         self.session = None
         self.lock = multiprocessing.Lock()
-        self.simplestatement = getattr(query,
-                                       'SimpleStatement')
 
-    def database(self, keyspace):
+    def change_namespace(self, namespace):
+        """change_namespace.
+
+        :param namespace
+        """
+        self.cassandra_conf.keyspace = namespace
+
+    def delete_namespace(self, namespace):
+        """delete_namespace.
+
+        :param namespace
+        """
+        self.connection.execute('DROP KEYSPACE ' + namespace)
+
+    def is_alive(self):
+        """Health check for Cassandra."""
+
+        try:
+            session = _connection(self.cassandra_conf)
+            session.execute(
+                "SELECT cluster_name, data_center FROM system.local;")
+            session.shutdown()
+        except Exception:
+            return False
+        return True
+
+    @property
+    def storage_name(self):
+        """storage name.
+
+        :returns 'Cassandra'
+        """
+        return 'Cassandra'
+
+    @property
+    def connection(self):
+        """Cassandra connection instance."""
+        return _connection(self.cassandra_conf)
+
+    @property
+    def database(self):
         """database.
+
         :returns session
         """
         # if the session has been shutdown, reopen a session
@@ -201,17 +236,18 @@ class CassandraStorageDriver(object):
             if self.session is None or self.session.is_shutdown:
                 # only require lock when the session is closed
                 lock_success = self.lock.acquire(block=True, timeout=10)
-                self.connect(keyspace)
+                self.connect()
         finally:
             if lock_success:
                 self.lock.release()
         return self.session
 
-    def connect(self, keyspace=None):
+    def connect(self):
         """connect.
+
         :returns connection
         """
-        self.session = _connection(keyspace)
+        self.session = _connection(self.cassandra_conf)
 
     def close_connection(self):
         """close_connection."""
@@ -220,42 +256,30 @@ class CassandraStorageDriver(object):
             lock_success = self.lock.acquire(block=True, timeout=10)
             self.session.cluster.shutdown()
             self.session.shutdown()
+            self.session = None
         finally:
             if lock_success:
                 self.lock.release()
 
-    @staticmethod
-    def _md5_exists(result):
-
-        if len(result) == 0:  # No md5 exist
-            return None
-
-        # There should be exactly one row and one column
-        assert len(result) == 1
-        assert len(result[0]) == 1
-
-        return result[0]
-
     def get_job_details(self, date, path):
 
-        query = self.simplestatement(CQL_GET_JOB_DETAILS,
+        stmt = query.SimpleStatement(CQL_GET_JOB_DETAILS,
                                      consistency_level=self.consistency_level)
         args = dict(
             date=date,
             path=path
         )
-        return self.session.execute(query, args)
-
+        return self.session.execute(stmt, args)
 
     def insert_job_details(self, path, job_details, job_count):
-        query = self.simplestatement(CQL_STORE_JOB_DETAILS,
+        stmt = query.SimpleStatement(CQL_STORE_JOB_DETAILS,
                                      consistency_level=self.consistency_level)
         date = canonicalize(time.time())
         args = dict(
             date=date,
             path=path,
             job_count=job_count,
-            jobs=job_details
+            jobs=json.dumps(job_details)
 
         )
-        self.session.execute(query, args)
+        self.session.execute(stmt, args)

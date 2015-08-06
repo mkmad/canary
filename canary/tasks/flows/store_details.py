@@ -24,6 +24,7 @@ def memoize(f):
 
     return helper
 
+
 @memoize
 def load_database_driver():
 
@@ -31,22 +32,22 @@ def load_database_driver():
     conf(project='canary', prog='canary', args=[])
 
     _CANARY_OPTIONS = [
-        cfg.StrOpt('driver', default='mongo',
+        cfg.StrOpt('driver', default='cassandra',
                    help='Driver to be loaded')
 
     ]
 
     CANARY_GROUP = cfg.OptGroup(
-            name='canary',
-            title='canary options'
-        )
+        name='canary',
+        title='canary options'
+    )
 
     conf.register_opts(_CANARY_OPTIONS, group=CANARY_GROUP)
-    return _load_driver(conf.canary.driver)
+    return _load_driver(conf.canary.driver, conf)
 
 
 @memoize
-def _load_driver(classname):
+def _load_driver(classname, conf):
     """Creates of the instance of the specified
     class given the fully-qualified name. The module
     is dynamically imported.
@@ -56,14 +57,16 @@ def _load_driver(classname):
     class_name = classname[pos + 1:]
 
     mod = importlib.import_module(module_name)
-    return getattr(mod, class_name)()
+    return getattr(mod, class_name)(conf)
+
 
 def canary_monitoring_service():
     flow = linear_flow.Flow('Canary Monitoring Service').add(
-            GenerateTaskflowInformation(),
-            InsertJobData(rebind=['job_details_tuple'])
+        GenerateTaskflowInformation(),
+        InsertJobData(rebind=['job_details_tuple'])
     )
     return flow
+
 
 class GenerateTaskflowInformation(task.Task):
 
@@ -80,11 +83,13 @@ class GenerateTaskflowInformation(task.Task):
         jb.close()
         return job_details_tuple
 
+
 class InsertJobData(task.Task):
 
     def execute(self, job_details_tuple, **kwargs):
         job_details, path, job_count = job_details_tuple
         driver = load_database_driver()
+        driver.connect()
         driver.insert_job_details(path=path,
                                   job_count=job_count,
                                   job_details=json.loads(job_details))
