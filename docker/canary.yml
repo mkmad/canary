@@ -1,0 +1,12 @@
+mongo:
+    image: mongo
+
+api:
+    build: ../api/.
+    links:
+        - mongo
+
+dashboard:
+    build: ../dashboard/.
+    links:
+        - mongo

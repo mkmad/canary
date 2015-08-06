@@ -1,5 +1,7 @@
 Jobs = new Mongo.Collection("jobs");
 
+MyLineChart = null;
+
 if (Meteor.isClient) {
   // This code only runs on the client
   Template.jobs.helpers({
@@ -29,13 +31,24 @@ if (Meteor.isClient) {
       }
   });
 
+  $(function() {
+    drawChart();
+  });
+
+  Tracker.autorun(function () {
+    drawChart();
+  });
+
 }
 
 function find_jobs(){
   var jobs = Jobs.find({}, {sort: {_id: -1}, limit: 1});
 
   if (jobs){
-    result = jobs.fetch()[0].jobs;
+    result = jobs.fetch()[0];
+    if (result){
+      result = result.jobs;
+    }
   }
   else{
     result = [];
