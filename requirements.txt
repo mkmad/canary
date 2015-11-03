@@ -1,7 +1,5 @@
-cdeploy
 falcon
 oslo.config
-pymongo
 taskflow
 -e git+https://github.com/python-zk/kazoo.git#egg=kazoo
 
@@ -15,3 +13,6 @@ requests
 netifaces
 wrapt
 decorator
+
+cassandra-driver>=2.1.3
+cdeploy
