@@ -7,6 +7,7 @@ from taskflow import task
 
 from canary.openstack.common import log
 from canary.model import JobBoard
+from kazoo.client import KazooClient
 
 
 log.setup('canary')
@@ -55,7 +56,6 @@ def _load_driver(classname, conf):
     pos = classname.rfind('.')
     module_name = classname[:pos]
     class_name = classname[pos + 1:]
-
     mod = importlib.import_module(module_name)
     return getattr(mod, class_name)(conf)
 
@@ -66,7 +66,6 @@ def canary_monitoring_service():
         InsertJobData(rebind=['job_details_tuple'])
     )
     return flow
-
 
 class GenerateTaskflowInformation(task.Task):
 

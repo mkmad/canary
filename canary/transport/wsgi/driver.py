@@ -1,7 +1,7 @@
 from wsgiref import simple_server
 
 import falcon
-from oslo.config import cfg
+from oslo_config import cfg
 
 from canary.openstack.common import log
 from canary.transport.wsgi import v1_0

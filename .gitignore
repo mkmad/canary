@@ -5,6 +5,12 @@ __pycache__/
 # C extensions
 *.so
 
+# Swap files
+*.swp
+*.swn
+*.swo
+*.rdb
+
 # Distribution / packaging
 .Python
 env/

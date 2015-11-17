@@ -32,11 +32,11 @@ if (Meteor.isClient) {
   });
 
   $(function() {
-    drawChart();
+    //drawChart();
   });
 
   Tracker.autorun(function () {
-    drawChart();
+    //drawChart();
   });
 
 }
