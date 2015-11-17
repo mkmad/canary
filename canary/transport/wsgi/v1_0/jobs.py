@@ -3,7 +3,7 @@ import time
 
 import falcon
 from falcon.errors import HTTPBadRequest
-from oslo.config import cfg
+from oslo_config import cfg
 
 from canary.openstack.common import log
 from canary.drivers.cassandra import cassandradriver
@@ -47,10 +47,24 @@ class ItemResource(object):
         job_details = \
             cassandra_driver.get_job_details(date=canonicalize(query_time),
                                              path=path)
+
         cassandra_driver.close_connection()
         resp.status = falcon.HTTP_200
 
         for i in range(len(job_details)):
-            job_details[i]['jobs'] = json.loads(
-                job_details[i]['jobs'])
+            flow_status = []
+            for val in json.loads(job_details[i]['jobs']):
+                stat = {}
+                #flow_id = val['flow_status'].keys()[0]
+                #flow_status[flow_id] = []
+                sub_tasks = val['flow_status'].values()[0]['tasks']
+                for sub_val in sub_tasks:
+                    if sub_val:
+                        #import ipdb;ipdb.set_trace()
+                        for task_name, task_values in sub_val.items():
+                            stat[task_name] = task_values['state']        
+                        flow_status.append(stat)
+
+            job_details[i]['jobs'] = json.loads(job_details[i]['jobs'])
+            job_details[i]['flow_status'] = flow_status
         resp.body = json.dumps(job_details)

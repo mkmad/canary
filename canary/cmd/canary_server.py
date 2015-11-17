@@ -1,4 +1,4 @@
-from oslo.config import cfg
+from oslo_config import cfg
 
 from canary.common import cli
 from canary.openstack.common import log as logging

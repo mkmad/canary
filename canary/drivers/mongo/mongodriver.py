@@ -64,7 +64,7 @@ def _connection(database):
 
 class MongoStorageDriver(object):
 
-    def __init__(self):
+    def __init__(self,conf):
         super(MongoStorageDriver, self).__init__()
         self.session = _connection(database=conf.mongo.database)
 

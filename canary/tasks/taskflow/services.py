@@ -82,7 +82,6 @@ class TaskflowDistributedTaskServices(base.DistributedTaskServices):
             with self.driver.job_board(
                     self.jobboard_backend_conf_worker.copy(),
                     persistence=persistence) as board:
-
                 conductor = single_threaded.SingleThreadedConductor(
                     "Canary worker conductor", board, persistence,
                     engine='serial')
