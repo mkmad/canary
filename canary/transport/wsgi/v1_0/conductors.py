@@ -41,7 +41,6 @@ class ConductorResource(object):
         resp.body = self._get_conductor_information(path)
 
     def _get_conductor_information(self,path,hosts=conf['canary_con']['hosts']):
-        #import ipdb;ipdb.set_trace()
         k = KazooClient(hosts=hosts)
         try:
             k.start()
@@ -50,4 +49,4 @@ class ConductorResource(object):
             return json.dumps({'conductor_count':conductor_count,'conductors':conductors})
             k.stop()
         except Exception as e:
-            print 'Failed to fetch conductor information',e
+            LOG.info('Failed to fetch conductor information: {0}'.format(e))

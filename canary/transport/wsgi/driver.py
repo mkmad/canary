@@ -5,7 +5,7 @@ from oslo_config import cfg
 
 from canary.openstack.common import log
 from canary.transport.wsgi import v1_0
-from canary.drivers.cassandra import cassandradriver
+from canary.drivers.redis import redisdriver 
 import canary
 
 conf = cfg.CONF
@@ -41,8 +41,7 @@ class Driver(object):
         self._init_database_connections()
 
     def _init_database_connections(self):
-        db_driver = cassandradriver.CassandraStorageDriver(self.conf)
-        db_driver.connect()
+        db_driver = redisdriver.RedisStorageDriver()
         canary.database = db_driver
 
     def _init_routes(self):

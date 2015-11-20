@@ -36,15 +36,6 @@ done
 # kill existing canary's
 ./kill_canary.sh
 
-# remove existing containers
-#docker kill docker_cassandra_1
-#docker rm docker_cassandra_1
-
-# run mongo
-#pip install docker-compose
-#docker-compose -f docker/dependencies.yml up -d
-
-
 # start the canary workers
 COUNTER=0
 while [ $COUNTER -lt $WORKERS ]; do

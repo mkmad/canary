@@ -57,8 +57,7 @@ def _load_driver(classname, conf):
     module_name = classname[:pos]
     class_name = classname[pos + 1:]
     mod = importlib.import_module(module_name)
-    return getattr(mod, class_name)(conf)
-
+    return mod
 
 def canary_monitoring_service():
     flow = linear_flow.Flow('Canary Monitoring Service').add(
@@ -88,7 +87,7 @@ class InsertJobData(task.Task):
     def execute(self, job_details_tuple, **kwargs):
         job_details, path, job_count = job_details_tuple
         driver = load_database_driver()
-        driver.connect()
+        driver = driver.RedisStorageDriver()
         driver.insert_job_details(path=path,
                                   job_count=job_count,
                                   job_details=json.loads(job_details))

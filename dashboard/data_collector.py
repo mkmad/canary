@@ -46,7 +46,6 @@ def run():
         resp = requests.get(canary_conductor_api)
         conductor = json.loads(resp.text)
         jobs_list = []
-        
         if jobs != []:
             jobs_list = jobs[0].get('jobs', [])
 
@@ -58,6 +57,10 @@ def run():
                 x for x in jobs_list if x.get('status') == "COMPLETED"])
             total_count = jobs[0].get('job_count', '0')
 
+        else:
+            print("No Jobs posted")
+            continue
+ 
         for flow_info in jobs[0].get('flow_status'):
             if flow_info:
                 for task_id, task_status in flow_info.items():
